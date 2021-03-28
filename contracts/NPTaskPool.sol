@@ -10,6 +10,7 @@ contract NPTaskPool
         string decision_function;
         uint reward;
         address requester;
+        uint attempts;
     }
 
     mapping(uint => NPTask) public getTask; 
@@ -30,7 +31,8 @@ contract NPTaskPool
             name: name, 
             decision_function: decision_function, 
             reward: reward, 
-            requester: msg.sender});
+            requester: msg.sender,
+            attempts: 0});
         
         getTask[new_task.index] = new_task;
 
