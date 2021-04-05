@@ -6,6 +6,7 @@ import Web3 from 'web3'
 import './App.css';
 import $ from "jquery";
 import NPTaskPool from './contracts/NPTaskPool.json';
+import Worker from "./my.worker";
 
 export class HomePage extends Component {
   constructor(props) {
@@ -60,18 +61,8 @@ export class RequestPage extends Component {
     const task_bounty = $("#tbounty").val();
 
     // Create smart contract for verification 
-    let web3 = this.props.state.web3;
-    
-    $('#tcompile').val($('#tcompile').val()+"Verification contract deployed.\n");
-
-    // Call the createTask function in NPTaskPool 
-    const NPPoolContract = new this.props.state.web3.eth.Contract(NPTaskPool.abi, NPTASKPOOL_ADDRESS);
-    // Temporarily use user's 
-    NPPoolContract.methods.createTask(task_name, task_script, task_bounty, "0x" + "0".repeat(40)).send({from: this.props.state.account})
-    .on('error', (error)=> {$('#tcompile').val($('#tcompile').val()+'Error Submitting Task: ' + error);})
-    .then((result)=>{
-        $('#tcompile').val($('#tcompile').val()+'Task Submitted to Blockchain.');
-    });
+    // let web3 = this.props.state.web3;
+   
     // let code_input = $('#tscript').val() 
     // let compiler_input = {
     //   language: 'Solidity',
@@ -88,8 +79,24 @@ export class RequestPage extends Component {
     //     }
     //   }
     // }
-    // var worker = new compileWorker();
-    // worker.postMessage([compiler_input]);
+    // const worker = new Worker();
+    // worker.postMessage({"compiler_input" : compiler_input}); 
+    // worker.addEventListener("message", function (event) {
+    //   $("#tcompile").val($("#tcompile").val() + event.data.message);
+    // });
+
+
+    // Call the createTask function in NPTaskPool 
+    const NPPoolContract = new this.props.state.web3.eth.Contract(NPTaskPool.abi, NPTASKPOOL_ADDRESS);
+    
+    NPPoolContract.methods.createTask(task_name, task_script, task_bounty, "0x" + "0".repeat(40)).send({from: this.props.state.account})
+    .on('error', (error)=> {$('#tcompile').val($('#tcompile').val()+'Error Submitting Task: ' + error);})
+    .then((result)=>{
+        $('#tcompile').val($('#tcompile').val()+'Task Submitted to Blockchain.');
+    });
+
+
+    
     // worker.onmessage = (e) =>
     // {
     //   if (e)
@@ -100,56 +107,6 @@ export class RequestPage extends Component {
 
     
 
-    // let output = JSON.parse(solc.compile(JSON.stringify(compiler_input)));
-
-    // if (output['errors'] !== 'undefined')
-    // {
-    //   alert("Error compiling code.");
-    //   $('#tcompile').val(JSON.stringify(output['errors']));
-    //   return;
-    // }
-
-    // $('#tcompile').val(JSON.stringify(output));
-
-    // let contracts = output.contracts;
-    
-    // // ABI description as JSON structure
-    // let abi = JSON.parse(contracts['verify.sol'].abi);
-
-    // // Smart contract EVM bytecode as hex
-    // let code = '0x' + contracts['verify.sol'].bin;
-
-    // // Create Contract proxy class
-    // let VerificationContract = web3.eth.contract(abi);
-
-    // $('#tcompile').val($('#tcompile').val()+"Deploying the contract...\n");
-    // let contract = VerificationContract.new({from: this.props.state.account, gas: 1000000, data: code});
-
-    // function sleep(ms) {
-    //   return new Promise(resolve => setTimeout(resolve, ms));
-    // }
-
-    // // We need to wait until any miner has included the transaction
-    // // in a block to get the address of the contract
-    // async function waitBlock() {
-    //   while (true) {
-    //     let receipt = web3.eth.getTransactionReceipt(contract.transactionHash);
-    //     if (receipt && receipt.contractAddress) {
-    //           $('#tcompile').val($('#tcompile').val()+"Verification contract deployed.\n");
-    //          // Call the createTask function in NPTaskPool 
-    //           const NPPoolContract = new this.props.state.web3.eth.Contract(NPTaskPool.abi, NPTASKPOOL_ADDRESS);
-    //           NPPoolContract.methods.createTask(task_name, task_script, task_bounty, receipt.contractAddress).send({from: this.props.state.account})
-    //           .on('error', (error)=> {alert('Error Submitting Task: ' + error);})
-    //           .then((result)=>{
-    //               alert('Task Submitted to Blockchain.');
-    //           });
-    //     }
-    //     $('#tcompile').val($('#tcompile').val()+ ("Waiting a mined block to include your contract... currently in block " + web3.eth.blockNumber + "\n"));
-    //     await sleep(4000);
-    //   }
-    // }
-
-    // waitBlock();
   }
 
   render() {
