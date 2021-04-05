@@ -1,4 +1,4 @@
-## Basics
+## Setup
 ### Pre-requisites 
 This app can be hosted locally using Node.js, Truffle and Ganache. The installation steps are as follows:
 1. Download and install Node.js https://nodejs.org/en/
